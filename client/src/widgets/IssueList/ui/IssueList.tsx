@@ -15,7 +15,12 @@ export const IssueList = ({ filteredIssues }: Props) => {
         <Grid container spacing={3} justifyContent="center">
             {filteredIssues.map((issue) => (
                 // @ts-ignore
-                <Grid sx={{ cursor: 'pointer' }} item key={issue.id} onClick={() => dispatch(openTaskModal(issue))}>
+                <Grid
+                    sx={{ cursor: 'pointer' }}
+                    item
+                    key={issue.id}
+                    onClick={() => dispatch(openTaskModal({ task: issue, source: 'edit' }))}
+                >
                     <Card sx={{ width: '400px', height: '300px' }}>
                         <CardContent>
                             <Typography variant="h6" gutterBottom>

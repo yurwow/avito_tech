@@ -31,7 +31,6 @@ export interface TaskFormValues {
     status: 'Backlog' | 'InProgress' | 'Done' | '';
     assignee?: Assignee | null;
     assigneeId: number | undefined;
-
 }
 
 export interface Assignee {
@@ -46,11 +45,11 @@ export const TaskForm = () => {
     const [updateTask] = useUpdateTaskMutation();
 
     const dispatch = useAppDispatch();
-    const { isOpen, task } = useAppSelector((state: RootState) => state.taskModal);
     const { data: usersResponse } = useGetUsersQuery();
     const { data: boardsResponse } = useGetProjectsQuery();
     const assigneeOptions = usersResponse?.data || [];
     const boardsOptions = boardsResponse?.data || [];
+    const { isOpen, task, source } = useAppSelector((state: RootState) => state.taskModal);
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -69,13 +68,17 @@ export const TaskForm = () => {
             priority: '',
             status: '',
             assignee: null,
-            boardId: undefined,
+            boardId: boardsOptions[0]?.id || undefined,
         },
         mode: 'onBlur',
     });
 
     useEffect(() => {
-        if (task && assigneeOptions.length > 0 && boardsOptions.length > 0) {
+        if (!task || source === 'create') return;
+
+        if (boardsOptions.length && assigneeOptions.length) {
+            console.log(task, 'таска');
+
             reset({
                 title: task.title,
                 description: task.description,
@@ -85,7 +88,9 @@ export const TaskForm = () => {
                 boardId: task.boardId || boardsOptions[0]?.id,
             });
         }
-    }, [task, assigneeOptions, boardsOptions, reset]);
+
+        console.log(task, 'task');
+    }, [task, source, boardsOptions, assigneeOptions, reset]);
 
     const handleFormSubmit = (data: TaskFormValues) => {
         const assignee = data.assignee ? data.assignee : undefined;
@@ -112,10 +117,34 @@ export const TaskForm = () => {
         }
     };
 
+    const handleClose = () => {
+        dispatch(closeTaskModal());
+        reset({
+            title: '',
+            description: '',
+            priority: '',
+            status: '',
+            assignee: null,
+            boardId: undefined,
+            assigneeId: undefined,
+        });
+    };
+
     const boardId = watch('boardId');
 
     return (
-        <Dialog open={isOpen} onClose={() => dispatch(closeTaskModal())} fullWidth maxWidth="sm">
+        <Dialog
+            open={isOpen}
+            onClose={handleClose}
+            fullWidth
+            maxWidth="sm"
+            sx={{
+                '& .MuiDialogContent-root': {
+                    maxHeight: '80vh',
+                    overflowY: 'auto',
+                },
+            }}
+        >
             <form onSubmit={handleSubmit(handleFormSubmit)}>
                 <DialogContent>
                     <Typography variant="h6" gutterBottom>
@@ -229,20 +258,29 @@ export const TaskForm = () => {
                     />
                 </DialogContent>
 
-                <DialogActions sx={{ display: 'flex', justifyContent: 'space-between', paddingLeft: '25px', paddingRight: '25px' }}>
-                    {isTasksPage && (
-                        <Button
-                            variant="outlined"
-                            onClick={() => {
-                                dispatch(closeTaskModal());
-                                navigate(`/board/${boardId}`);
-                            }}
-                        >
-                            Перейти на доску
-                        </Button>
-                    )}
+                <DialogActions
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        paddingLeft: '25px',
+                        paddingRight: '25px',
+                    }}
+                >
+                    <Box>
+                        {isTasksPage && source !== 'create' && (
+                            <Button
+                                variant="outlined"
+                                onClick={() => {
+                                    dispatch(closeTaskModal());
+                                    navigate(`/board/${boardId}`);
+                                }}
+                            >
+                                Перейти на доску
+                            </Button>
+                        )}
+                    </Box>
                     <Box sx={{ display: 'flex', gap: 1 }}>
-                        <Button onClick={() => dispatch(closeTaskModal())}>Отмена</Button>
+                        <Button onClick={handleClose}>Отмена</Button>
                         <Button type="submit" variant="contained" color="primary" disabled={isSubmitting}>
                             {task ? 'Обновить задачу' : 'Создать задачу'}
                         </Button>

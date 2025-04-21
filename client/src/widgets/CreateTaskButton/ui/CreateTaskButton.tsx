@@ -3,13 +3,18 @@ import { Add as AddIcon } from '@mui/icons-material';
 import { TaskForm } from '@/widgets/TaskForm';
 import { useAppDispatch } from '@/app/providers/StoreProvider/lib/hooks/useAppDispatch.ts';
 import { openTaskModal } from '@/features/taskModal/taskModalSlice.ts';
+
 export const CreateTaskButton = () => {
     const dispatch = useAppDispatch();
+
+    const handleCreateTask = () => {
+        dispatch(openTaskModal({ task: null, source: 'create' }));
+    };
 
     return (
         <>
             <Button
-                onClick={() => dispatch(openTaskModal(null))}
+                onClick={handleCreateTask}
                 variant="contained"
                 startIcon={<AddIcon />}
                 sx={{

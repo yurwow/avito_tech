@@ -31,13 +31,15 @@ const mapTaskToFormValues = (task: ITask, boardId: number): TaskFormValues & { i
     priority: task.priority,
     status: task.status,
     boardId,
-    assignee: task.assignee ? {
-        id: task.assignee.id,
-        fullName: task.assignee.fullName,
-        email: task.assignee.email,
-        avatarUrl: task.assignee.avatarUrl
-    } : undefined,
-    assigneeId: task.assignee?.id ?? ''
+    assignee: task.assignee
+        ? {
+              id: task.assignee.id,
+              fullName: task.assignee.fullName,
+              email: task.assignee.email,
+              avatarUrl: task.assignee.avatarUrl,
+          }
+        : undefined,
+    assigneeId: task.assignee?.id ?? '',
 });
 
 export const KanbanBoard = () => {
@@ -148,7 +150,14 @@ export const KanbanBoard = () => {
                                 <Fragment key={task.id}>
                                     <CardContentTask
                                         task={task}
-                                        onClick={() => dispatch(openTaskModal(mapTaskToFormValues(task, Number(id))))}
+                                        onClick={() =>
+                                            dispatch(
+                                                openTaskModal({
+                                                    task: mapTaskToFormValues(task, Number(id)),
+                                                    source: 'edit',
+                                                }),
+                                            )
+                                        }
                                     />
                                 </Fragment>
                             ))}
