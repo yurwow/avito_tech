@@ -1,4 +1,5 @@
 import {
+    Box,
     Button,
     Dialog,
     DialogActions,
@@ -29,6 +30,8 @@ export interface TaskFormValues {
     priority: 'Low' | 'Medium' | 'High' | '';
     status: 'Backlog' | 'InProgress' | 'Done' | '';
     assignee?: Assignee | null;
+    assigneeId: number | undefined;
+
 }
 
 export interface Assignee {
@@ -78,14 +81,14 @@ export const TaskForm = () => {
                 description: task.description,
                 priority: task.priority,
                 status: task.status,
-                assignee: task.assignee || null,
+                assigneeId: task.assignee?.id ?? undefined,
                 boardId: task.boardId || boardsOptions[0]?.id,
             });
         }
     }, [task, assigneeOptions, boardsOptions, reset]);
 
     const handleFormSubmit = (data: TaskFormValues) => {
-        const assignee = data.assignee ? data.assignee : null;
+        const assignee = data.assignee ? data.assignee : undefined;
 
         const payload = {
             ...data,
@@ -207,7 +210,7 @@ export const TaskForm = () => {
                     />
 
                     <Controller
-                        name="assignee"
+                        name="assigneeId"
                         control={control}
                         rules={{ required: 'Исполнитель обязателен' }}
                         render={({ field, fieldState }) => (
@@ -215,7 +218,7 @@ export const TaskForm = () => {
                                 <InputLabel>Исполнитель</InputLabel>
                                 <Select {...field} label="Исполнитель">
                                     {assigneeOptions.map((assignee) => (
-                                        <MenuItem key={assignee.id} value={assignee}>
+                                        <MenuItem key={assignee.id} value={assignee.id}>
                                             {assignee.fullName}
                                         </MenuItem>
                                     ))}
@@ -226,7 +229,7 @@ export const TaskForm = () => {
                     />
                 </DialogContent>
 
-                <DialogActions sx={{ mt: '-20px', justifyContent: 'space-between' }}>
+                <DialogActions sx={{ display: 'flex', justifyContent: 'space-between', paddingLeft: '25px', paddingRight: '25px' }}>
                     {isTasksPage && (
                         <Button
                             variant="outlined"
@@ -238,10 +241,12 @@ export const TaskForm = () => {
                             Перейти на доску
                         </Button>
                     )}
-                    <Button onClick={() => dispatch(closeTaskModal())}>Отмена</Button>
-                    <Button type="submit" variant="contained" color="primary" disabled={isSubmitting}>
-                        {task ? 'Обновить задачу' : 'Создать задачу'}
-                    </Button>
+                    <Box sx={{ display: 'flex', gap: 1 }}>
+                        <Button onClick={() => dispatch(closeTaskModal())}>Отмена</Button>
+                        <Button type="submit" variant="contained" color="primary" disabled={isSubmitting}>
+                            {task ? 'Обновить задачу' : 'Создать задачу'}
+                        </Button>
+                    </Box>
                 </DialogActions>
             </form>
         </Dialog>

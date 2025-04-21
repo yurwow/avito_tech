@@ -31,7 +31,13 @@ const mapTaskToFormValues = (task: ITask, boardId: number): TaskFormValues & { i
     priority: task.priority,
     status: task.status,
     boardId,
-    assigneeId: task.assignee.id,
+    assignee: task.assignee ? {
+        id: task.assignee.id,
+        fullName: task.assignee.fullName,
+        email: task.assignee.email,
+        avatarUrl: task.assignee.avatarUrl
+    } : undefined,
+    assigneeId: task.assignee?.id ?? ''
 });
 
 export const KanbanBoard = () => {

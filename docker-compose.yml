@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   backend:
     build:
@@ -22,5 +20,5 @@ services:
     environment:
       - VITE_API_URL=http://backend:8080
     working_dir: /app
-    command: ["npm", "run", "preview", "--", "--host", "0.0.0.0"]
+    command: ["npm", "run", "preview", "--", "--host", "0.0.0.0", "--port", "5173"]
 
