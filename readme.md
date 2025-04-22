@@ -38,3 +38,7 @@ docker-compose up --build
 
 http://localhost:5173
 
+![image](https://github.com/user-attachments/assets/2f4524b6-42c3-4670-9a87-9bec6afa43e1)
+![image](https://github.com/user-attachments/assets/f4955549-b9fa-4922-912b-1b199184f0fc)
+![image](https://github.com/user-attachments/assets/a4e15833-78a1-4f31-9dae-87bb49f3d55f)
+![image](https://github.com/user-attachments/assets/ad80f67f-d6c2-4aee-a27e-fed773943715)
