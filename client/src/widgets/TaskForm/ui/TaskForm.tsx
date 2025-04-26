@@ -11,6 +11,7 @@ import {
     Select,
     TextField,
     Typography,
+    CircularProgress,
 } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import { useEffect } from 'react';
@@ -22,6 +23,7 @@ import { closeTaskModal } from '@/features/taskModal/taskModalSlice';
 import { useAppSelector } from '@/app/providers/StoreProvider/lib/hooks/useAppSelector.ts';
 import { RootState } from '@/app/providers/StoreProvider/config/store.ts';
 import { useLocation, useNavigate } from 'react-router';
+import { toast } from 'react-toastify';
 
 export interface TaskFormValues {
     title: string;
@@ -77,8 +79,6 @@ export const TaskForm = () => {
         if (!task || source === 'create') return;
 
         if (boardsOptions.length && assigneeOptions.length) {
-            console.log(task, 'таска');
-
             reset({
                 title: task.title,
                 description: task.description,
@@ -88,8 +88,6 @@ export const TaskForm = () => {
                 boardId: task.boardId || boardsOptions[0]?.id,
             });
         }
-
-        console.log(task, 'task');
     }, [task, source, boardsOptions, assigneeOptions, reset]);
 
     const handleFormSubmit = (data: TaskFormValues) => {
@@ -104,16 +102,24 @@ export const TaskForm = () => {
             createTask(payload)
                 .unwrap()
                 .then(() => {
+                    toast.success('Задача успешно создана!');
                     dispatch(closeTaskModal());
                 })
-                .catch(console.error);
+                .catch((error) => {
+                    console.error(error);
+                    toast.error('Ошибка при создании задачи');
+                });
         } else {
             updateTask({ id: task.id || 0, updatedTask: payload })
                 .unwrap()
                 .then(() => {
+                    toast.success('Задача успешно обновлена!');
                     dispatch(closeTaskModal());
                 })
-                .catch(console.error);
+                .catch((error) => {
+                    console.error(error);
+                    toast.error('Ошибка при обновлении задачи');
+                });
         }
     };
 
@@ -281,7 +287,13 @@ export const TaskForm = () => {
                     </Box>
                     <Box sx={{ display: 'flex', gap: 1 }}>
                         <Button onClick={handleClose}>Отмена</Button>
-                        <Button type="submit" variant="contained" color="primary" disabled={isSubmitting}>
+                        <Button
+                            type="submit"
+                            variant="contained"
+                            color="primary"
+                            disabled={isSubmitting}
+                            endIcon={isSubmitting ? <CircularProgress size={20} color="inherit" /> : null}
+                        >
                             {task ? 'Обновить задачу' : 'Создать задачу'}
                         </Button>
                     </Box>

@@ -6,6 +6,7 @@ import { ErrorBoundary } from '@/app/providers/ErrorBoundary';
 import { BrowserRouter } from 'react-router';
 import { Provider } from 'react-redux';
 import store from '@/app/providers/StoreProvider/config/store.ts';
+import { Toast } from '@/shared/ui/Toast';
 
 createRoot(document.getElementById('root')!).render(
     <StrictMode>
@@ -13,6 +14,7 @@ createRoot(document.getElementById('root')!).render(
             <ErrorBoundary>
                 <Provider store={store}>
                     <App />
+                    <Toast />
                 </Provider>
             </ErrorBoundary>
         </BrowserRouter>

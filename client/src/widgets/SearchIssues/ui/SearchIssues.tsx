@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react';
 import { useGetIssueQuery } from '@/shared/api/IssueApi.ts';
-import { Loading } from '@/shared/ui/Loading';
 import { Searchs } from '@/widgets/Searchs';
 import { IssueList } from '@/widgets/IssueList';
 
@@ -44,12 +43,10 @@ export const SearchIssues = () => {
         setStatusFilter,
     };
 
-    if (isLoading) return <Loading />;
-
     return (
         <>
-            <Searchs filters={filters} setters={setters} uniqueBoards={uniqueBoards} />
-            <IssueList filteredIssues={filteredIssues} />
+            <Searchs isLoading={isLoading} filters={filters} setters={setters} uniqueBoards={uniqueBoards} />
+            <IssueList filteredIssues={filteredIssues} isLoading={isLoading} />
         </>
     );
 };
